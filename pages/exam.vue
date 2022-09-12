@@ -100,7 +100,7 @@
               <img
                 v-if="option2.image"
                 style="max-width: 300px"
-                :src="option1.image"
+                :src="option2.image"
                 alt=""
               />
             </div>
