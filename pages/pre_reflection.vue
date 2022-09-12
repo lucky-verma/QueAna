@@ -12,8 +12,9 @@
         </div>
         <div class="col-md-5">
           <button
-            id="next-button"
+            class="btn btn-primary"
             style="margin: auto"
+            :disabled="submitButtonDisabled"
             @click="
               $router.push(
                 '/exam?exam_id=' + examDetails._id + '&question_no=1'
@@ -22,6 +23,12 @@
           >
             Start Task
           </button>
+          <p style="margin-top: 10px; color: red" v-if="submitButtonDisabled">
+            Please submit your pre-reflection to start task
+          </p>
+          <p style="margin-top: 10px; color: green" v-if="show_sucess">
+            {{ show_sucess }}
+          </p>
         </div>
       </div>
     </div>
@@ -66,23 +73,38 @@ export default {
       show_form: false,
       show_data: true,
       examDetails: {},
+      show_sucess: "",
       pre_reflection: "",
+      submitButtonDisabled: true,
     };
   },
   methods: {
+    async createLog(type, action, question_id) {
+      let logBody = {
+        exam_id: this.$route.query.exam_id,
+        question_id: question_id,
+        type: type,
+        action: action,
+      };
+
+      const generateLog = await this.$examAPI.createLog(logBody);
+    },
     async fetchBehaviour() {
       try {
         const behavour = await this.$examAPI.getBehaviour({
           exam_id: this.$route.query.exam_id,
         });
+        this.submitButtonDisabled = false;
         this.show_form = false;
       } catch (error) {
         if (error.response.data) {
           if (error.response.data.errorMessage == "Refection Required") {
             this.show_data = true;
+
             return;
           }
           this.show_form = true;
+          this.submitButtonDisabled = true;
         }
       }
     },
@@ -103,6 +125,10 @@ export default {
           exam_id: this.$route.query.exam_id,
           pre_reflection: this.pre_reflection,
         });
+        this.submitButtonDisabled = false;
+        this.show_sucess =
+          "Pre-Reflection has been submitted, you can start your task now!";
+        this.show_form = false;
       } catch (error) {}
     },
   },
@@ -163,7 +189,21 @@ button {
   color: black;
   font-family: "Lato", sans-serif;
 }
+.incomplete {
+  background: #ffffb3 !important;
+  border: 1px solid #b3b300 !important;
+  border-radius: 5px !important;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
 
+.complete {
+  background: #b3d9ff !important;
+  border: 1px solid #3399ff !important;
+  border-radius: 5px !important;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
 #wrapper {
   position: absolute;
   transform: translateX(-50%);

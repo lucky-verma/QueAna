@@ -19,7 +19,7 @@ export class ExamAPI {
     });
   }
   getExamlist(params) {
-    return this.$axios.get("/exam/schedule", params, {
+    return this.$axios.get("/exam/schedule", {
       headers: {
         Authorization: `Bearer ${this.store.state.authentication.token}`,
       },
@@ -53,6 +53,36 @@ export class ExamAPI {
       }
     );
   }
+  getCurrentQuestionExplaination(params) {
+    return this.$axios.get(
+      "/question/get_user_question_result?" + convertToSearchParams(params),
+      {
+        headers: {
+          Authorization: `Bearer ${this.store.state.authentication.token}`,
+        },
+      }
+    );
+  }
+  getUserResponse(params) {
+    return this.$axios.get(
+      "/response/get_user_response?" + convertToSearchParams(params),
+      {
+        headers: {
+          Authorization: `Bearer ${this.store.state.authentication.token}`,
+        },
+      }
+    );
+  }
+  getQuestionWiseReport(params) {
+    return this.$axios.get(
+      "/response/get_question_report?" + convertToSearchParams(params),
+      {
+        headers: {
+          Authorization: `Bearer ${this.store.state.authentication.token}`,
+        },
+      }
+    );
+  }
 
   createReflection(body) {
     return this.$axios.post(`/behaviour/create`, body, {
@@ -70,6 +100,13 @@ export class ExamAPI {
   }
   createResponse(body) {
     return this.$axios.post(`/response/create`, body, {
+      headers: {
+        Authorization: `Bearer ${this.store.state.authentication.token}`,
+      },
+    });
+  }
+  createLog(body) {
+    return this.$axios.post(`/log/create`, body, {
       headers: {
         Authorization: `Bearer ${this.store.state.authentication.token}`,
       },

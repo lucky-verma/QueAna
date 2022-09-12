@@ -1,13 +1,10 @@
 <template>
   <div id="wrapper">
     <div id="display-container" style="margin-top: 50px">
-      <h6 class="pop">Questions</h6>
-      <p>Click on the below Questions to view or edit.</p>
-      <div>
-        <!-- <p>Yellow : Incomplete Response , Blue : Completed Response</p> -->
-      </div>
+      <h2 class="pop">Explanations</h2>
+      <p>Click on the below Questions to view.</p>
 
-      <ul class="nav nav-tabs">
+      <ul class="nav nav-tabs mb-3">
         <li
           class="nav-item"
           @click="
@@ -20,7 +17,7 @@
                 question.question_no
               ),
               $router.push(
-                '/exam?exam_id=' +
+                '/explain?exam_id=' +
                   $route.query.exam_id +
                   '&question_no=' +
                   question.question_no
@@ -40,25 +37,13 @@
           </p>
         </li>
       </ul>
-    </div>
-    <div id="display-container" style="margin-top: 50px">
-      <div class="col-md-12 mt-3">
-        <label for="" class="form-control-label">Google Search </label>
-        <textarea
-          class="form-control"
-          placeholder="Enter your search Term"
-          type="text"
-          rows="1"
-          v-model="search"
-        ></textarea>
-      </div>
-      <div class="col-md-12 mt-3">
-        <button @click="googleSearch">Google Search</button>
-      </div>
-    </div>
-
-    <div id="display-container" style="margin-top: 50px">
       <div class="header">
+        <div class="number-of-count">
+          <span class="number-of-question pop">
+            Total Correct : {{ total_correct }}/
+            {{ examDetails.total_questions }} Question</span
+          >
+        </div>
         <div class="number-of-count">
           <span class="number-of-question pop">
             {{ question.question_no }} of
@@ -67,12 +52,18 @@
         </div>
       </div>
       <div id="container">
-        <div class="row" v-if="loaded">
+        <div class="row" v-if="loaded" style="pointer-events: none">
           <div class="col-md-12">
             <p class="pop">Problem Statement :</p>
           </div>
           <div class="col-md-12">
             <p class="" v-html="question.question"></p>
+          </div>
+          <div class="col-md-12">
+            <p class="pop">Explaination :</p>
+          </div>
+          <div class="col-md-12">
+            <p class="" v-html="explain"></p>
           </div>
           <div class="col-md-12" v-if="question.image">
             <img :src="generateImage(question.image)" alt="" />
@@ -134,11 +125,17 @@
             </div>
           </div>
           <div class="col-md-12 mt-3 pop">
-            <p>Selected Option : {{ selected_option }}</p>
+            <p v-if="correct_option == selected_option" style="color: green">
+              Selected Option : {{ selected_option }}
+            </p>
+            <p v-else style="color: red">
+              Selected Option : {{ selected_option }}
+            </p>
+            <p style="color: green">correct Option : {{ correct_option }}</p>
           </div>
         </div>
-        <div class="row">
-          <div class="col-md-12 mt-3 pop"><p>How Confident are you?</p></div>
+        <div class="row" disabled style="pointer-events: none">
+          <div class="col-md-12 mt-3 pop"><p>Your confidence level</p></div>
           <div class="col-md-12" style="border: 1px black solid">
             <button
               :class="confidenceClass('1')"
@@ -173,13 +170,13 @@
           </div>
         </div>
 
-        <div class="col-md-12 mt-3">
+        <div class="col-md-12 mt-3" style="pointer-events: none">
           <label for="" class="form-control-label">Comments </label>
           <textarea
             class="form-control"
             type="text"
             rows="5"
-            @change="commentChanges"
+            disabled
             v-model="comment"
             placeholder="Type your reflection here…
 "
@@ -187,19 +184,12 @@
         </div>
       </div>
       <div class="row mt-4">
-        <div class="col-md-10"></div>
-        <div class="col-md-1">
+        <div class="col-md-10">
           <button
-            id="next-button"
-            style="margin: auto"
-            @click="previousQuestion"
+            class="btn btn-primary"
+            @click="$router.push('/final?exam_id=' + $route.query.exam_id)"
           >
-            Back
-          </button>
-        </div>
-        <div class="col-md-1">
-          <button id="next-button" style="margin: auto" @click="nextQuestion">
-            Next
+            Fill Post-Reflection
           </button>
         </div>
       </div>
@@ -229,6 +219,9 @@ export default {
       option2: {},
       option3: {},
       question_list: [],
+      explain: "",
+      correct_option: null,
+      total_correct: 0,
 
       option4: {},
       examDetails: {},
@@ -254,66 +247,26 @@ export default {
 
   methods: {
     async validateQuestions() {
-      let validation = false;
-      let responses = this.examination.responses;
-      let total_questions = parseInt(this.examDetails.total_questions);
-      if (total_questions != responses.length) {
-        console.log(responses.length, total_questions);
-
-        this.submitButtonDisabled = true;
-      }
-      let allcompletecount = 0;
-      let questionsAppended = [];
-      for (let index = 0; index < responses.length; index++) {
-        const element = responses[index];
-        if (element.answer_id && element.confidence && element.question_no) {
-          this.question_list.push({
-            complete: true,
-            question_no: element.question_no,
-          });
-          questionsAppended.push(element.question_no);
-        } else {
-          allcompletecount += 1;
-          //This question is incomplete
-          this.question_list.push({
-            complete: false,
-            question_no: element.question_no,
-          });
-          questionsAppended.push(element.question_no);
-        }
-      }
-      console.log("question", questionsAppended);
-      for (let index = 1; index <= total_questions; index++) {
-        if (!questionsAppended.includes(index)) {
-          this.question_list.push({
-            complete: false,
-            question_no: index,
-          });
-        }
-      }
-      if (allcompletecount == total_questions) {
-        validation = true;
-      }
-      this.question_list = this.question_list.sort(function (a, b) {
-        return a.question_no - b.question_no;
+      const validationSteop = await this.$examAPI.getQuestionWiseReport({
+        exam_id: this.$route.query.exam_id,
       });
-      if (this.question_list.length == total_questions) {
-        this.submitButtonDisabled = false;
+
+      let listData = validationSteop.data.body;
+      this.total_correct = 0;
+      for (let index = 0; index < listData.length; index++) {
+        const element = listData[index];
+        this.question_list.push({
+          complete: element.correct,
+          question_no: element.question_no,
+        });
+        if (element.correct) {
+          this.total_correct += 1;
+        }
       }
-      console.log("Finala Validation", this.question_list);
-      return validation;
 
       // this.submitButtonDisabled
     },
-    commentChanges() {
-      this.createLog(
-        "Click",
-        `Comment Field changed`,
-        null,
-        "comment",
-        this.comment
-      );
-    },
+
     async createLog(
       type,
       action,
@@ -336,13 +289,6 @@ export default {
     },
     confidenceChange(confidence) {
       this.confidence = confidence;
-      this.createLog(
-        "Click",
-        `Selected confidence`,
-        null,
-        "confidence",
-        confidence
-      );
     },
     confidenceClass(option) {
       // console.log(option, "aa");
@@ -355,11 +301,18 @@ export default {
     },
     optionClass(option) {
       let classOption = "col-md-6 option-div pop";
-      if (this.selected_option == option) {
-        classOption += " chosen";
+      if (this.selected_option == option && option == this.correct_option) {
+        classOption += " correct";
+        return classOption;
         // console.log("option", option);
-      } else {
       }
+      if (this.selected_option == option) {
+        classOption += " incorrect";
+      }
+      if (option == this.correct_option) {
+        classOption += " correct";
+      }
+
       return classOption;
     },
     selectedOption(option) {
@@ -384,27 +337,29 @@ export default {
         option
       );
     },
-    googleSearch() {
-      if (!this.search) {
-        return;
-      }
 
-      window.open(
-        "https://www.google.com/search?q=" + this.search,
-        "_blank" // <- This is what makes it open in a new window.
-      );
-      this.createLog("Search", "query=" + this.search);
-    },
     generateImage(image) {
       return "http://localhost:3000/" + image;
     },
     async fetchQuestion() {
       try {
-        const fetchQuestion = await this.$examAPI.getCurrentQuestion({
-          exam_id: this.$route.query.exam_id,
-          question_no: this.question_no,
-        });
+        const fetchQuestion =
+          await this.$examAPI.getCurrentQuestionExplaination({
+            exam_id: this.$route.query.exam_id,
+            question_no: this.question_no,
+          });
         this.question = fetchQuestion.data.question;
+        const fetchAnswer = await this.$examAPI.getUserResponse({
+          exam_id: this.$route.query.exam_id,
+          question_id: this.question._id,
+        });
+        if (fetchAnswer.data.response.length == 0) {
+          return;
+        }
+        this.answer_id = fetchAnswer.data.response[0].answer_id;
+        this.comment = fetchAnswer.data.response[0].comment;
+        this.confidence = fetchAnswer.data.response[0].confidence;
+        this.explain = fetchAnswer.data.response[0].question.explain;
 
         for (let index = 0; index < this.question.answers.length; index++) {
           const element = this.question.answers[index];
@@ -416,6 +371,9 @@ export default {
               option: element.option,
               answer_id: element._id,
             };
+            if (element.is_correct) {
+              this.correct_option = element.option;
+            }
 
             if (this.option1.answer_id == this.answer_id) {
               this.selected_option = "A";
@@ -427,6 +385,10 @@ export default {
               option: element.option,
               answer_id: element._id,
             };
+            if (element.is_correct) {
+              this.correct_option = element.option;
+            }
+
             if (this.option2.answer_id == this.answer_id) {
               this.selected_option = "B";
             }
@@ -437,6 +399,10 @@ export default {
               option: element.option,
               answer_id: element._id,
             };
+            if (element.is_correct) {
+              this.correct_option = element.option;
+            }
+
             if (this.option3.answer_id == this.answer_id) {
               this.selected_option = "C";
             }
@@ -447,6 +413,10 @@ export default {
               option: element.option,
               answer_id: element._id,
             };
+            if (element.is_correct) {
+              this.correct_option = element.option;
+            }
+
             if (this.option4.answer_id == this.answer_id) {
               this.selected_option = "D";
             }
@@ -483,117 +453,7 @@ export default {
       this.search = null;
       this.confidence = null;
     },
-    async nextQuestion() {
-      //Saving to store
 
-      let currentPageData = {
-        question_no: this.question_no,
-        exam_id: this.exam_id,
-        question_id: this.question._id,
-        answer_id: this.answer_id,
-        confidence: this.confidence,
-        comment: this.comment,
-      };
-
-      // console.log("Over writeneedesd", currentPageData);
-
-      let responses = this.examination.responses.slice();
-      let newResponse = [];
-
-      let exists = false;
-      for (let index = 0; index < responses.length; index++) {
-        console.log("looping ");
-        const element = responses[index];
-        if (element.question_no == this.question_no) {
-          console.log("Over Written");
-          element = currentPageData;
-          exists = true;
-          newResponse.push(currentPageData);
-        } else {
-          newResponse.push(element);
-        }
-      }
-      if (!exists) {
-        newResponse.push(currentPageData);
-      }
-
-      console.log("Next resoi", newResponse);
-      await this.$store.dispatch("examination/setResponse", {
-        responses: newResponse,
-      });
-      //Routing Purpose
-      this.createLog(
-        "Next",
-        `Page changed`,
-        null,
-        "question_no",
-        this.question_no + 1
-      );
-      this.resetData();
-      if (this.examDetails.total_questions > this.question_no) {
-        this.question_no += 1;
-        return this.$router.push(
-          "/exam?exam_id=" + this.exam_id + "&question_no=" + this.question_no
-        );
-      }
-
-      this.$router.push("/post_reflection?exam_id=" + this.exam_id);
-    },
-    async previousQuestion() {
-      //Change Question No
-      let currentPageData = {
-        question_no: this.question_no,
-        exam_id: this.exam_id,
-        question_id: this.question._id,
-        answer_id: this.answer_id,
-        confidence: this.confidence,
-        comment: this.comment,
-      };
-
-      // console.log("Over writeneedesd", currentPageData);
-
-      let responses = this.examination.responses.slice();
-      let newResponse = [];
-
-      let exists = false;
-      for (let index = 0; index < responses.length; index++) {
-        console.log("looping ");
-        const element = responses[index];
-        if (element.question_no == this.question_no) {
-          console.log("Over Written");
-          element = currentPageData;
-          exists = true;
-          newResponse.push(currentPageData);
-        } else {
-          newResponse.push(element);
-        }
-      }
-      if (!exists) {
-        newResponse.push(currentPageData);
-      }
-
-      console.log("Next resoi", newResponse);
-      await this.$store.dispatch("examination/setResponse", {
-        responses: newResponse,
-      });
-      if (this.question_no == 1) {
-        this.$router.push("/pre_reflection?exam_id=" + this.exam_id);
-      } else {
-        this.question_no -= 1;
-        this.$router.push(
-          "/exam?exam_id=" + this.exam_id + "&question_no=" + this.question_no
-        );
-      }
-      this.createLog(
-        "Back",
-        `Page changed`,
-        null,
-        "question_no",
-        this.question_no
-      );
-
-      this.resetData();
-    },
     async preFetchData() {
       let responses = this.examination.responses.slice();
 
@@ -616,9 +476,9 @@ export default {
     this.question_no = parseInt(this.$route.query.question_no);
     // console.log(this.que/)
     this.exam_id = this.$route.query.exam_id;
-    this.fetchQuestion();
+    // this.fetchQuestion();
     this.fetchExam();
-    this.validateQuestions();
+    // this.validateQuestions();
   },
 };
 </script>
@@ -688,16 +548,16 @@ button {
   max-width: 100.5em;
 }
 .incomplete {
-  background: #ffffb3 !important;
-  border: 1px solid #b3b300 !important;
+  background: #ff9999 !important;
+  border: 1px solid #ff0000 !important;
   border-radius: 5px !important;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .complete {
-  background: #b3d9ff !important;
-  border: 1px solid #3399ff !important;
+  background: #b3ffb3 !important;
+  border: 1px solid #009900 !important;
   border-radius: 5px !important;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -746,6 +606,10 @@ a {
   margin-bottom: 1.25em;
   font-weight: 500;
 }
+.nav-tabs {
+  border-bottom: 0px;
+}
+
 .option-div {
   font-size: 0.9em;
   width: 100%;
@@ -801,7 +665,7 @@ button {
   color: #689f38;
   border-color: #689f38;
 }
-.inCorrect {
+.incorrect {
   background-color: #ffdde0;
   color: #d32f2f;
   border-color: #d32f2f;

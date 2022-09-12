@@ -120,7 +120,7 @@ export default {
     that.$cookies.remove("access_token");
     that.$cookies.remove("isLogin");
     // sessionStorage.clear()
-    resolve(response.data);
+    return true;
   },
   updateProfilePicture(data, payload) {
     data.commit("SET_PROFILE_IMAGE", payload);

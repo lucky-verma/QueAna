@@ -66,9 +66,10 @@ export default {
     },
 
     async submitForm() {
-      try {
-        console.log("Logout flow complete");
-      } catch (error) {}
+      console.log("Logout flow complete");
+      await this.$store.dispatch("authentication/logout");
+      // window.reload();
+      this.$router.push("/login");
     },
   },
   mounted() {

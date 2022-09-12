@@ -77,6 +77,26 @@ export default {
         }
       } catch (error) {}
     },
+    async createLog(
+      type,
+      action,
+      answer_id = null,
+      form_field = null,
+      form_value = null
+    ) {
+      let logBody = {
+        exam_id: this.$route.query.exam_id,
+        question_id: null,
+        type: type,
+        answer_id: answer_id,
+        field_value: form_value,
+        field_name: form_field,
+        action: action,
+        page: this.$route.path,
+      };
+
+      const generateLog = await this.$examAPI.createLog(logBody);
+    },
 
     async submitForm() {
       try {
@@ -84,6 +104,14 @@ export default {
           behavour_id: this.behaviour._id,
           post_reflection: this.post_reflection,
         });
+        this.createLog(
+          "Submit",
+          `Post Reflection`,
+          null,
+          "post_reflection",
+          this.post_reflection
+        );
+
         this.$router.push("/finished?exam_id=" + this.$route.query.exam_id);
       } catch (error) {}
     },

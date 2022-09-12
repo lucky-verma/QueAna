@@ -54,7 +54,12 @@
                 class="event__cta"
                 title="Book Programme Now"
                 @click="
-                  $router.push('/exam?exam_id=' + exam._id + '&question_no=1')
+                  createLog(
+                    'Start',
+                    'clicked on start from home page',
+                    exam._id
+                  ),
+                    $router.push('/exam?exam_id=' + exam._id + '&question_no=1')
                 "
               >
                 Start
@@ -88,6 +93,20 @@ export default {
     Login,
   },
   methods: {
+    async createLog(type, action, exam_id = null, question_id = null) {
+      let logBody = {
+        exam_id: exam_id,
+        question_id: question_id,
+        type: type,
+        action: action,
+        field_name: "",
+        field_value: "",
+        answer_id: null,
+        page: this.$route.path,
+      };
+
+      const generateLog = await this.$examAPI.createLog(logBody);
+    },
     async fetchExamList() {
       try {
         const examList = await this.$examAPI.getExamlist();

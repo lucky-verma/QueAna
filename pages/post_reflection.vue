@@ -16,7 +16,14 @@
                 $route.query.exam_id +
                 '&question_no=' +
                 question.question_no
-            )
+            ),
+              createLog(
+                'Page Jump',
+                `Page changed`,
+                null,
+                'question_no',
+                question.question_no
+              )
           "
           v-for="question in question_list"
           :key="question.question_no"
@@ -77,6 +84,26 @@ export default {
     };
   },
   methods: {
+    async createLog(
+      type,
+      action,
+      answer_id = null,
+      form_field = null,
+      form_value = null
+    ) {
+      let logBody = {
+        exam_id: this.$route.query.exam_id,
+        question_id: null,
+        type: type,
+        answer_id: answer_id,
+        field_value: form_value,
+        field_name: form_field,
+        action: action,
+        page: this.$route.path,
+      };
+
+      const generateLog = await this.$examAPI.createLog(logBody);
+    },
     generateStatus() {
       return "mr-1 nav-link complete";
     },
@@ -136,10 +163,14 @@ export default {
           // console.log(element,);
           const submitResopnse = await this.$examAPI.createResponse(element);
           console.log(submitResopnse.data, "Response sfrom server");
-          this.$router.push("/final?exam_id=" + this.$route.query.exam_id);
+          this.createLog("Submit", `Task Submitted by user`, null, null, null);
+          this.$router.push(
+            "/explain?exam_id=" + this.$route.query.exam_id + "&question_no=1"
+          );
           // return;
         }
       } catch (error) {
+        console.log(error);
         this.errorMessage = "";
         if (error.response.data) {
           if (
@@ -147,9 +178,9 @@ export default {
             "Already submitted response for this question"
           ) {
             this.errorMessage = "Already submitted responses!";
-            // this.$router.push(
-            //   "/pre_reflection?exam_id=" + this.$route.query.exam_id
-            // );
+            this.$router.push(
+              "/explain?exam_id=" + this.$route.query.exam_id + "&question_no=1"
+            );
             // return;
           }
         }

@@ -15,7 +15,7 @@ export default {
     state.token = token;
     this.$cookies.set("access_token", token, {
       path: "/",
-      maxAge: 60 * 60,
+      maxAge: 120 * 60,
     });
     // localStorage.setItem('token', token)
   },
