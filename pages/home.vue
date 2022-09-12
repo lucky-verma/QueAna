@@ -1,7 +1,18 @@
 <template>
   <main class="main">
-    <div style="background-color: white; padding: 10px">
-      <h3>Upcoming Exam Schedule</h3>
+    <div
+      class="row"
+      style="background-color: white; padding: 20px; border: 2px black solid"
+    >
+      <div class="col-md-11">
+        <h3>Upcoming Task Schedule</h3>
+      </div>
+      <div class="col-md-1">
+        <button class="btn btn-primary" @click.prevent="submitForm">
+          Logout
+        </button>
+      </div>
+
       <!-- <h6>Hello,{{ authentication.full_name }}</h6> -->
     </div>
     <!-- <p>This is not</p> -->
@@ -93,6 +104,12 @@ export default {
     Login,
   },
   methods: {
+    async submitForm() {
+      console.log("Logout flow complete");
+      await this.$store.dispatch("authentication/logout");
+      // window.reload();
+      this.$router.push("/login");
+    },
     async createLog(type, action, exam_id = null, question_id = null) {
       let logBody = {
         exam_id: exam_id,
