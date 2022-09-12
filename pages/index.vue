@@ -6,19 +6,19 @@
       <div class="header-area">
         <div class="logo">QUEn</div>
         <ul class="links">
-          <li>Home</li>
+          <!-- <li>Home</li> -->
 
-          <li>Signup</li>
-          <li>Signin</li>
+          <li @click.prevent="$router.push('/signup')">Signup</li>
+          <li @click.prevent="$router.push('/login')">Signin</li>
         </ul>
       </div>
       <div class="info">
-        <h1>Examination Center For Students</h1>
+        <h1>Task Center For Students</h1>
         <p>
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus
           odit nihil ullam nesciunt quidem iste, Repellendus odit nihil
         </p>
-        <button>Button name</button>
+        <!-- <button>Button name</button> -->
       </div>
       <div class="image">
         <img src="https://i.postimg.cc/65QxYYzh/001234.png" />
