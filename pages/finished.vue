@@ -7,15 +7,7 @@
           <!-- <p>{{ this.examDetails.problem_context }}</p> -->
         </div>
         <div class="col-md-12 mt-3">
-          <label for="" class="form-control-label">Post Reflection </label>
-          <textarea
-            class="form-control"
-            placeholder="Please mention your post reflection here
-"
-            type="text"
-            rows="5"
-            v-model="post_reflection"
-          ></textarea>
+          <div>You can logout now .</div>
         </div>
 
         <div class="col-md-5 mt-3">
@@ -24,7 +16,7 @@
             style="margin: auto"
             @click.prevent="submitForm"
           >
-            Submit Post-Reflection
+            Logout
           </button>
         </div>
       </div>
@@ -32,8 +24,6 @@
   </div>
 </template>
 <script>
-import { off } from "process";
-
 export default {
   name: "",
   middleware: ["isAuthenticated"],
@@ -44,7 +34,6 @@ export default {
       show_data: true,
       examDetails: {},
       post_reflection: "",
-      behaviour: {},
     };
   },
   methods: {
@@ -53,11 +42,9 @@ export default {
         const behavour = await this.$examAPI.getBehaviour({
           exam_id: this.$route.query.exam_id,
         });
-        this.behaviour = behavour.data.behaviour[0];
       } catch (error) {
         if (error.response.data) {
-          console.log("Route");
-          if (error.response.data.message == "Reflection Required") {
+          if (error.response.data.errorMessage == "Refection Required") {
             this.show_data = true;
             this.$router.push(
               "/pre_reflection?exam_id=" + this.$route.query.exam_id
@@ -80,11 +67,7 @@ export default {
 
     async submitForm() {
       try {
-        const submitReflection = await this.$examAPI.updateBehaviour({
-          behavour_id: this.behaviour._id,
-          post_reflection: this.post_reflection,
-        });
-        this.$router.push("/finished?exam_id=" + this.$route.query.exam_id);
+        console.log("Logout flow complete");
       } catch (error) {}
     },
   },

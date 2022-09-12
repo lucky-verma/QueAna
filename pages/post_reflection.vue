@@ -88,11 +88,12 @@ export default {
         this.show_form = false;
       } catch (error) {
         if (error.response.data) {
-          if (error.response.data.errorMessage == "Refection Required") {
-            this.show_data = true;
+          if (error.response.data.message == "Reflection Required") {
+            this.$router.push(
+              "/pre_reflection?exam_id=" + this.$route.query.exam_id
+            );
             return;
           }
-          this.show_form = true;
         }
       }
     },
@@ -135,6 +136,8 @@ export default {
           // console.log(element,);
           const submitResopnse = await this.$examAPI.createResponse(element);
           console.log(submitResopnse.data, "Response sfrom server");
+          this.$router.push("/final?exam_id=" + this.$route.query.exam_id);
+          // return;
         }
       } catch (error) {
         this.errorMessage = "";

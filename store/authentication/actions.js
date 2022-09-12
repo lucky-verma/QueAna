@@ -113,28 +113,14 @@ export default {
   logout(data, payload) {
     let that = this;
 
-    return new Promise((resolve, reject) => {
-      this.$authAPI
-        .logout(payload)
-        .then(function (response) {
-          if (response.data.isSuccess) {
-            data.commit("SET_TOKEN", response.data.body.token);
-            data.commit("SET_LOGIN", false);
-            data.commit("RESET_PROFILE_DETAILS", false);
-          }
-          that.$cookies.remove("access_token");
+    data.commit("SET_TOKEN", "");
+    data.commit("SET_LOGIN", false);
+    data.commit("RESET_PROFILE_DETAILS", false);
 
-          that.$cookies.remove("isLogin");
-          // sessionStorage.clear()
-          resolve(response.data);
-        })
-        .catch(function (error) {
-          that.$cookies.remove("access_token");
-
-          that.$cookies.remove("isLogin");
-          reject(error);
-        });
-    });
+    that.$cookies.remove("access_token");
+    that.$cookies.remove("isLogin");
+    // sessionStorage.clear()
+    resolve(response.data);
   },
   updateProfilePicture(data, payload) {
     data.commit("SET_PROFILE_IMAGE", payload);

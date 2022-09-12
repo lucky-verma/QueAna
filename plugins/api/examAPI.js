@@ -61,6 +61,13 @@ export class ExamAPI {
       },
     });
   }
+  updateBehaviour(body) {
+    return this.$axios.patch(`/behaviour/update`, body, {
+      headers: {
+        Authorization: `Bearer ${this.store.state.authentication.token}`,
+      },
+    });
+  }
   createResponse(body) {
     return this.$axios.post(`/response/create`, body, {
       headers: {

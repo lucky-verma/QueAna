@@ -33,7 +33,7 @@
           <div class="col-md-12">
             <p class="" v-html="question.question"></p>
           </div>
-          <div class="col-md-12 mb-3" v-if="question.image">
+          <div class="col-md-12" v-if="question.image">
             <img :src="generateImage(question.image)" alt="" />
           </div>
           <div :class="optionClass('A')" @click="selectedOption('A')">
