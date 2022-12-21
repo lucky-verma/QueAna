@@ -5,34 +5,27 @@
       <p>Click on the below Questions to view.</p>
 
       <ul class="nav nav-tabs mb-3">
-        <li
-          class="nav-item"
-          @click="
-            (question_no = question.question_no),
-              createLog(
-                'Page Jump',
-                `Page changed`,
-                null,
-                'question_no',
-                question.question_no
-              ),
-              $router.push(
-                '/explain?exam_id=' +
-                  $route.query.exam_id +
-                  '&question_no=' +
-                  question.question_no
-              )
-          "
-          v-for="question in question_list"
-          :key="question.question_no"
-        >
-          <p
-            :class="
-              question.complete
-                ? 'mr-1 nav-link complete'
-                : 'mr-1 nav-link incomplete'
-            "
-          >
+        <li class="nav-item" @click="
+          (question_no = question.question_no),
+          createLog(
+            'Page Jump',
+            `Page changed`,
+            null,
+            'question_no',
+            question.question_no
+          ),
+          $router.push(
+            '/explain?exam_id=' +
+            $route.query.exam_id +
+            '&question_no=' +
+            question.question_no
+          )
+        " v-for="question in question_list" :key="question.question_no">
+          <p :class="
+            question.complete
+              ? 'mr-1 nav-link complete'
+              : 'mr-1 nav-link incomplete'
+          ">
             {{ question.question_no }}
           </p>
         </li>
@@ -41,14 +34,12 @@
         <div class="number-of-count">
           <span class="number-of-question pop">
             Total Correct : {{ total_correct }}/
-            {{ examDetails.total_questions }} Question</span
-          >
+            {{ examDetails.total_questions }} Question</span>
         </div>
         <div class="number-of-count">
           <span class="number-of-question pop">
             {{ question.question_no }} of
-            {{ examDetails.total_questions }} Question</span
-          >
+            {{ examDetails.total_questions }} Question</span>
         </div>
       </div>
       <div id="container">
@@ -74,12 +65,7 @@
             </div>
             <div class="col-md-12">{{ option1.answer }}</div>
             <div class="col-md-12">
-              <img
-                v-if="option1.image"
-                style="max-width: 300px"
-                :src="option1.image"
-                alt=""
-              />
+              <img v-if="option1.image" style="max-width: 300px" :src="option1.image" alt="" />
             </div>
           </div>
           <div :class="optionClass('B')" @click="selectedOption('B')">
@@ -88,12 +74,7 @@
             </div>
             <div class="col-md-12">{{ option2.answer }}</div>
             <div class="col-md-12">
-              <img
-                v-if="option2.image"
-                style="max-width: 300px"
-                :src="option1.image"
-                alt=""
-              />
+              <img v-if="option2.image" style="max-width: 300px" :src="option1.image" alt="" />
             </div>
           </div>
           <div :class="optionClass('C')" @click="selectedOption('C')">
@@ -102,12 +83,7 @@
             </div>
             <div class="col-md-12">{{ option3.answer }}</div>
             <div class="col-md-12">
-              <img
-                v-if="option3.image"
-                style="max-width: 300px"
-                :src="option3.image"
-                alt=""
-              />
+              <img v-if="option3.image" style="max-width: 300px" :src="option3.image" alt="" />
             </div>
           </div>
           <div :class="optionClass('D')" @click="selectedOption('D')">
@@ -116,12 +92,7 @@
             </div>
             <div class="col-md-12">{{ option4.answer }}</div>
             <div class="col-md-12">
-              <img
-                v-if="option4.image"
-                style="max-width: 300px"
-                :src="option4.image"
-                alt=""
-              />
+              <img v-if="option4.image" style="max-width: 300px" :src="option4.image" alt="" />
             </div>
           </div>
           <div class="col-md-12 mt-3 pop">
@@ -135,36 +106,23 @@
           </div>
         </div>
         <div class="row" disabled style="pointer-events: none">
-          <div class="col-md-12 mt-3 pop"><p>Your confidence level</p></div>
+          <div class="col-md-12 mt-3 pop">
+            <p>Your confidence level</p>
+          </div>
           <div class="col-md-12" style="border: 1px black solid">
-            <button
-              :class="confidenceClass('1')"
-              @click="confidenceChange('1')"
-            >
+            <button :class="confidenceClass('1')" @click="confidenceChange('1')">
               1
             </button>
-            <button
-              :class="confidenceClass('2')"
-              @click="confidenceChange('2')"
-            >
+            <button :class="confidenceClass('2')" @click="confidenceChange('2')">
               2
             </button>
-            <button
-              :class="confidenceClass('3')"
-              @click="confidenceChange('3')"
-            >
+            <button :class="confidenceClass('3')" @click="confidenceChange('3')">
               3
             </button>
-            <button
-              :class="confidenceClass('4')"
-              @click="confidenceChange('4')"
-            >
+            <button :class="confidenceClass('4')" @click="confidenceChange('4')">
               4
             </button>
-            <button
-              :class="confidenceClass('5')"
-              @click="confidenceChange('5')"
-            >
+            <button :class="confidenceClass('5')" @click="confidenceChange('5')">
               5
             </button>
           </div>
@@ -172,23 +130,13 @@
 
         <div class="col-md-12 mt-3" style="pointer-events: none">
           <label for="" class="form-control-label">Comments </label>
-          <textarea
-            class="form-control"
-            type="text"
-            rows="5"
-            disabled
-            v-model="comment"
-            placeholder="Type your reflection here…
-"
-          ></textarea>
+          <textarea class="form-control" type="text" rows="5" disabled v-model="comment" placeholder="Type your reflection here…
+"></textarea>
         </div>
       </div>
       <div class="row mt-4">
         <div class="col-md-10">
-          <button
-            class="btn btn-primary"
-            @click="$router.push('/final?exam_id=' + $route.query.exam_id)"
-          >
+          <button class="btn btn-primary" @click="$router.push('/final?exam_id=' + $route.query.exam_id)">
             Fill Post-Reflection
           </button>
         </div>
@@ -339,7 +287,7 @@ export default {
     },
 
     generateImage(image) {
-      return "http://localhost:3000/" + image;
+      return "http://52.70.207.217:3000/" + image;
     },
     async fetchQuestion() {
       try {
@@ -443,7 +391,7 @@ export default {
         if (examDetails.data.exam.length > 0) {
           this.examDetails = examDetails.data.exam[0];
         }
-      } catch (error) {}
+      } catch (error) { }
     },
 
     resetData() {
@@ -490,21 +438,26 @@ export default {
   position: sticky;
   top: 0px;
 }
+
 * {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
 }
+
 label {
   font-family: "Poppins", sans-serif;
 }
+
 .pop {
   font-family: "Poppins", sans-serif;
 }
+
 body {
   background-color: #0a69ed;
 }
+
 .start-screen,
 .score-container {
   position: absolute;
@@ -516,20 +469,24 @@ body {
   justify-content: center;
   align-items: center;
 }
+
 button {
   border: none;
   outline: none;
   cursor: pointer;
 }
+
 #start-button,
 #restart {
   font-size: 1em;
   padding: 0.5em 1.8em;
   border-radius: 0.2em;
 }
+
 #restart {
   margin-top: 0.9em;
 }
+
 .btn-scale {
   min-width: 44px;
   width: 6%;
@@ -547,6 +504,7 @@ button {
   width: 90%;
   max-width: 100.5em;
 }
+
 .incomplete {
   background: #ff9999 !important;
   border: 1px solid #ff0000 !important;
@@ -562,6 +520,7 @@ button {
   cursor: pointer;
   transition: all 0.3s ease;
 }
+
 #display-container {
   position: relative;
   background-color: #ffffff;
@@ -571,6 +530,7 @@ button {
   border-radius: 0.6em;
   box-shadow: 0 20px 45px rgba(0, 24, 56, 0.15);
 }
+
 a {
   display: block;
   background-color: #ffffff;
@@ -585,6 +545,7 @@ a {
   border-radius: 0.4em;
   box-shadow: 0 20px 45px rgba(0, 24, 56, 0.15);
 }
+
 .header {
   margin-bottom: 1.8em;
   display: flex;
@@ -593,6 +554,7 @@ a {
   padding-bottom: 0.6em;
   border-bottom: 0.1em solid #c0bfd2;
 }
+
 .timer-div {
   background-color: #e1f5fe;
   width: 7.5em;
@@ -602,10 +564,12 @@ a {
   justify-content: space-between;
   padding: 0.7em 1.8em;
 }
+
 .question {
   margin-bottom: 1.25em;
   font-weight: 500;
 }
+
 .nav-tabs {
   border-bottom: 0px;
 }
@@ -622,9 +586,11 @@ a {
   border: 1px solid #c0bfd2;
   border-radius: 0.3em;
 }
+
 .option-div:hover {
   cursor: pointer;
 }
+
 .chosen {
   background: aliceblue !important;
   border: 1px solid #84c5fe !important;
@@ -633,16 +599,19 @@ a {
   cursor: pointer;
   transition: all 0.3s ease;
 }
+
 .option-div:disabled {
   color: #0b012d;
   cursor: not-allowed;
 }
+
 .btn-container {
   width: 100%;
   display: flex;
   justify-content: flex-end;
   margin-top: 1.5em;
 }
+
 button {
   font-size: 1em;
   background-color: #0a69ed;
@@ -650,6 +619,7 @@ button {
   padding: 0.7em 1.8em;
   border-radius: 0.3em;
 }
+
 #next-button {
   font-size: 1em;
   background-color: #0a69ed;
@@ -657,26 +627,32 @@ button {
   padding: 0.7em 1.8em;
   border-radius: 0.3em;
 }
+
 .hide {
   display: none;
 }
+
 .correct {
   background-color: #e7f6d5;
   color: #689f38;
   border-color: #689f38;
 }
+
 .incorrect {
   background-color: #ffdde0;
   color: #d32f2f;
   border-color: #d32f2f;
 }
+
 #user-score {
   font-size: 1.5em;
   color: #ffffff;
 }
+
 i.fab {
   color: #ff0000;
 }
+
 @media screen and (max-width: 600px) {
   body {
     font-size: 12px;
